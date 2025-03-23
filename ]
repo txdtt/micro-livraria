@@ -8,17 +8,18 @@ body {
 .books {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem; 
+    gap: 1rem; /* Adds space between cards */
 }
 
 .books .card {
-    flex: 1 1 calc(33.33% - 1rem);
-    box-sizing: border-box; 
+    flex: 1 1 calc(33.33% - 1rem); /* Makes each card take up one-third of the row, accounting for the gap */
+    box-sizing: border-box; /* Ensures padding and margin don't affect the layout */
 }
 
 
 .hero-body .container {
-    width: 100%;
+    max-width: 700px;
+    display: grid;
 }
 
 .hero-body .title {

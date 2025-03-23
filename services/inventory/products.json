@@ -22,5 +22,13 @@
         "quantity": 10,
         "price": 67.99,
         "photo": "/img/design.png"
+    },
+    {
+        "name": "testeNome",
+        "quantity": 15,
+        "price": 20,
+        "photo": "/img/design.png",
+        "author": "testeAutor",
+        "id": 4
     }
 ]

@@ -2,6 +2,7 @@ const grpc = require('@grpc/grpc-js');
 const path = require('path');
 const protoLoader = require('@grpc/proto-loader');
 const products = require('./products.json');
+const fs = require('fs');
 
 const packageDefinition = protoLoader.loadSync('proto/inventory.proto', {
     keepCase: true,

@@ -62,6 +62,7 @@ app.get('/product/:id', (req, res, next) => {
 
 app.post('/product', (req, res, next) => {
     const productData = req.body;
+    console.log('Received product data:', productData);
 
     inventory.InsertProduct(productData, (err, data) => {
         if (err) {

@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <label for="price">Preço:</label>
                     <input type="number" id="price" name="price" min="1">
                     <br>
-                    <label for="photo">Capa:</label>
+                    <label for="photo">Foto:</label>
                     <input type="text" id="photo" name="photo">
                     <br>
                     <button type="submit" id="submitBook">Adicionar</button>
@@ -141,11 +141,11 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
 
             const bookData = {
+                author: document.getElementById("author").value,
                 name: document.getElementById("name").value,
-                quantity: parseInt(document.getElementById("quantity").value),
-                price: parseFloat(document.getElementById("price").value),
                 photo: document.getElementById("photo").value,
-                author: document.getElementById("photo").value,
+                price: parseFloat(document.getElementById("price").value),
+                quantity: parseInt(document.getElementById("quantity").value),
             }
 
             fetch("http://localhost:3000/product", {
