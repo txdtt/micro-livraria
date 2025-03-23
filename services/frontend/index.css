@@ -111,8 +111,8 @@ body {
 }
 
 .bookForm button {
-    margin: 30px;
     padding: 8px 12px;
+    margin: 5px;
     background-color: #007bff;
     color: white;
     border: none;
