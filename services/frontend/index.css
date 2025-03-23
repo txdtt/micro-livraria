@@ -8,14 +8,13 @@ body {
 .books {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem; 
+    gap: 1rem;
 }
 
 .books .card {
-    flex: 1 1 calc(33.33% - 1rem);
-    box-sizing: border-box; 
+    flex: 1 1 calc(33.33% - 1rem); /* Ensure each card takes up one-third of the row */
+    box-sizing: border-box;
 }
-
 
 .hero-body .container {
     width: 100%;
@@ -108,5 +107,19 @@ body {
 }
 
 .searchbar button:hover {
+    background-color: #0056b3;
+}
+
+.bookForm button {
+    margin: 30px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bookform button:hover {
     background-color: #0056b3;
 }
