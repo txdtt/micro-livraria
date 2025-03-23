@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 /**
  * Retorna a lista de produtos da loja via InventoryService
@@ -57,6 +58,19 @@ app.get('/product/:id', (req, res, next) => {
             res.json(product);
         }
     });
+});
+
+app.post('/product', (req, res, next) => {
+    const productData = req.body;
+
+    inventory.InsertProduct(productData, (err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send( { error: 'could not insert product' });
+        } else {
+            res.json(data);
+        }
+    })
 });
 
 /**
