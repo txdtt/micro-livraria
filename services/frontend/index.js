@@ -1,6 +1,6 @@
 function newBook(book) {
     const div = document.createElement('div');
-    div.className = 'column is-4';
+    div.className = 'card-container';
     div.innerHTML = `
         <div class="card is-shady">
             <div class="card-image">
@@ -59,6 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const openBookForm = document.getElementById("openBookForm");
 
     function renderSearchedBook(id) {
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+
         fetch(`http://localhost:3000/product/${id}`)
             .then(response => {
                 if (!response.ok) {
@@ -69,8 +72,82 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(book => {
                 books.innerHTML = "";
                 books.appendChild(newBook(book));
+
+                const successNotification = document.createElement('div');
+                successNotification.className = 'notification is-success is-light';
+                successNotification.style.maxWidth = '800px';
+                successNotification.style.margin = '0 auto 20px auto';
+                successNotification.style.borderRadius = '6px';
+                successNotification.style.boxShadow = '0 2px 3px rgba(10, 10, 10, 0.1)';
+                successNotification.innerHTML = `
+                    <button class="delete"></button>
+                    <div class="columns is-vcentered">
+                        <div class="column has-text-centered">
+                            <p><strong>Livro encontrado!</strong> Exibindo "${book.name}" de ${book.author}.</p>
+                        </div>
+                    </div>
+                `;
+                books.insertAdjacentElement('beforebegin', successNotification);
+
+                successNotification.querySelector('.delete').addEventListener('click', function () {
+                    successNotification.remove();
+                });
+
+                setTimeout(() => {
+                    if (document.body.contains(successNotification)) {
+                        successNotification.style.opacity = '0';
+                        successNotification.style.transition = 'opacity 0.5s ease';
+                        setTimeout(() => {
+                            if (document.body.contains(successNotification)) {
+                                successNotification.remove();
+                            }
+                        }, 500);
+                    }
+                }, 5000);
             })
-            .catch(error => console.error("Erro ao buscar livro: ", error))
+            .catch(error => {
+                console.error("Erro ao buscar livro: ", error);
+
+                books.innerHTML = "";
+                const errorNotification = document.createElement('div');
+                errorNotification.className = 'notification is-danger is-light';
+                errorNotification.style.maxWidth = '800px';
+                errorNotification.style.margin = '0 auto 20px auto';
+                errorNotification.style.borderRadius = '6px';
+                errorNotification.style.boxShadow = '0 2px 3px rgba(10, 10, 10, 0.1)';
+
+                errorNotification.innerHTML = `
+                    <button class="delete"></button>
+                    <div class="columns is-vcentered">
+                        <div class="column has-text-centered">
+                            <p class="has-text-weight-bold mb-1">Erro ao buscar livro!</p>
+                            <p>Não foi possível encontrar um livro com o ID: ${id}.</p>
+                            <p class="mt-2 is-size-7">Por favor, verifique o ID e tente novamente.</p>
+                        </div>
+                    </div>
+                `;
+
+                const notificationContainer = document.createElement('div');
+                notificationContainer.className = 'container';
+                notificationContainer.appendChild(errorNotification);
+                books.appendChild(notificationContainer);
+
+                errorNotification.querySelector('.delete').addEventListener('click', function () {
+                    errorNotification.remove();
+                });
+
+                setTimeout(() => {
+                    if (document.body.contains(errorNotification)) {
+                        errorNotification.style.opacity = '0';
+                        errorNotification.style.transition = 'opacity 0.5s ease';
+                        setTimeout(() => {
+                            if (document.body.contains(errorNotification)) {
+                                errorNotification.remove();
+                            }
+                        }, 500);
+                    }
+                }, 3000);
+            });
     }
 
     searchButton.addEventListener("click", function () {
@@ -78,63 +155,144 @@ document.addEventListener('DOMContentLoaded', function () {
         if (query) {
             renderSearchedBook(query);
         } else {
-            alert("Insira um ID válido.");
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            const warningNotification = document.createElement('div');
+            warningNotification.className = 'notification is-warning is-light';
+            warningNotification.style.maxWidth = '800px';
+            warningNotification.style.margin = '0 auto 20px auto';
+            warningNotification.style.borderRadius = '6px';
+            warningNotification.style.boxShadow = '0 2px 3px rgba(10, 10, 10, 0.1)';
+
+            warningNotification.innerHTML = `
+                <button class="delete"></button>
+                <div class="columns is-vcentered has-text-centered">
+                    <div class="column">
+                        <p><strong>Busca vazia!</strong> Por favor, insira um ID válido para buscar.</p>
+                    </div>
+                </div>
+            `;
+
+            books.insertAdjacentElement('beforebegin', warningNotification);
+
+            warningNotification.querySelector('.delete').addEventListener('click', function () {
+                warningNotification.remove();
+            });
+
+            setTimeout(() => {
+                if (document.body.contains(warningNotification)) {
+                    warningNotification.style.opacity = '0';
+                    warningNotification.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        if (document.body.contains(warningNotification)) {
+                            warningNotification.remove();
+                        }
+                    }, 500);
+                }
+            }, 4000);
         }
     });
 
     resetButton.addEventListener("click", function () {
         books.innerHTML = "";
         fetch('http://localhost:3000/products')
-        .then((data) => {
-            if (data.ok) {
-                return data.json();
-            }
-            throw data.statusText;
-        })
-        .then((data) => {
-            if (data) {
-                data.forEach((book) => {
-                    books.appendChild(newBook(book));
-                });
-            }
-        });
+            .then((data) => {
+                if (data.ok) {
+                    return data.json();
+                }
+                throw data.statusText;
+            })
+            .then((data) => {
+                if (data) {
+                    data.forEach((book) => {
+                        books.appendChild(newBook(book));
+                    });
+                }
+            });
     })
 
     openBookForm.addEventListener("click", function () {
-        const div = document.createElement('div');
         if (document.getElementById("bookFormContainer")) {
-            return; 
+            return;
         }
-        div.id="bookFormContainer";
+
+        const div = document.createElement('div');
+        div.id = "bookFormContainer";
+        div.className = "box mt-3 has-background-light";
+
         div.innerHTML = `
             <div>
-                <form>
-                    <label>Inserir dados do novo livro</label>
-                    <br>
-                    <label for="name">Nome:</label>
-                    <input type="text" id="name" name="name">
-                    <br>
-                    <label for="author">Autor:</label>
-                    <input type="text" id="author" name="author">
-                    <br>
-                    <label for="quantity">Quantidade:</label>
-                    <input type="number" id="quantity" name="quantity" min="1">
-                    <br>
-                    <label for="price">Preço:</label>
-                    <input type="number" id="price" name="price" min="1">
-                    <br>
-                    <label for="photo">Foto:</label>
-                    <input type="text" id="photo" name="photo">
-                    <br>
-                    <button type="submit" id="submitBook">Adicionar</button>
+                <h3 class="title is-4 has-text-centered mb-4">Adicionar Novo Livro</h3>
+                <form id="bookForm">
+                    <div class="field">
+                        <label for="name" class="label">Nome do Livro</label>
+                        <div class="control has-icons-left">
+                            <input type="text" id="name" name="name" class="input" placeholder="Auto da Compadecida" required>
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="author" class="label">Autor</label>
+                        <div class="control has-icons-left">
+                            <input type="text" id="author" name="author" class="input" placeholder="Ariano Suassuna" required>
+                        </div>
+                    </div>
+                    
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label for="quantity" class="label">Quantidade</label>
+                                <div class="control has-icons-left">
+                                    <input type="number" id="quantity" name="quantity" min="1" class="input" placeholder="1" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column">
+                            <div class="field">
+                                <label for="price" class="label">Preço (R$)</label>
+                                <div class="control has-icons-left">
+                                    <input type="number" id="price" name="price" min="0.01" step="0.01" class="input" placeholder="29.90" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="photo" class="label">URL da Imagem</label>
+                        <div class="control has-icons-left">
+                            <input type="text" id="photo" name="photo" class="input" placeholder="/img/book.png" required>
+                        </div>
+                    </div>    
+                    
+                    <div class="field is-grouped is-grouped-centered mt-5">
+                        <div class="control">
+                            <button type="submit" class="button is-success">
+                                <span>Adicionar Livro</span>
+                            </button>
+                        </div>
+                        <div class="control">
+                            <button type="button" id="closeBookForm" class="button is-danger">
+                                <span>Cancelar</span>
+                            </button>
+                        </div>
+                    </div>
                 </form>
-                <button type="button" id="closeBookForm">Fechar</button>
             </div>
-        `
-        document.querySelector(".bookForm").appendChild(div);
+        `;
+
+        document.querySelector("#openBookForm").insertAdjacentElement('afterend', div);
+
+        setTimeout(() => {
+            div.style.opacity = "0";
+            div.style.transition = "opacity 0.3s ease";
+            setTimeout(() => { div.style.opacity = "1"; }, 50);
+        }, 0);
 
         document.getElementById("closeBookForm").addEventListener("click", function () {
-            div.remove();
+            div.style.opacity = "0";
+            setTimeout(() => { div.remove(); }, 300);
         });
 
         document.getElementById("bookForm").addEventListener("submit", function (e) {
@@ -155,15 +313,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(bookData)
             })
-            .then(response => response.json())
-            .then(data => {
-                alert("Livro adicionado com sucesso!");
-                div.remove();
-            })
-            .catch(error => {
-                console.error("Erro ao adicionar livro: ", error);
-                alert("Erro ao adicionar livro!");
-            })
+                .then(response => response.json())
+                .then(data => {
+                    swal({
+                        title: "Sucesso!",
+                        text: "Livro adicionado com sucesso!\nAtualize a página por favor",
+                        icon: "success",
+                        button: "Continuar",
+                    });
+                    div.style.opacity = "0";
+                    setTimeout(() => { div.remove(); }, 300);
+                })
+                .catch(error => {
+                    console.error("Erro ao adicionar livro: ", error);
+                    swal({
+                        title: "Erro!",
+                        text: "Não foi possível adicionar o livro!",
+                        icon: "error",
+                        button: "Tentar novamente",
+                    });
+                })
         })
     })
 
@@ -201,5 +370,3 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error(err);
         });
 });
-
-
